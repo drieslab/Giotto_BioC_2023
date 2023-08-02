@@ -1,0 +1,720 @@
+---
+title: "Giotto Suitewith Xenium Data"
+date: '2023-08-02'
+author: Matthew O'Brien
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-line-numbers: true
+    code-fold: show
+    code-overflow: scroll
+    code-block-border-left: "#E41A1C"
+
+---
+
+## Data and Package Loading
+```{r, eval=TRUE}
+# ** RESULTS FOLDER **
+results_folder = '/projectnb/rd-spat/HOME/mobrien2/xenium/BioC/'
+
+library(terra)
+library(Giotto)
+
+instrs = createGiottoInstructions(save_dir = results_folder,
+                                  save_plot = TRUE,
+                                  show_plot = TRUE,
+                                  return_plot = FALSE)
+
+# ** SET PATH TO FOLDER CONTAINING XENIUM DATA **
+xenium_folder = '/projectnb/rd-spat/DATA/Public_data/Spatial/Multiplexing_RNA/xenium/FFPE_Human_Breast_Cancer/Rep1/'
+
+# General files:
+settings_path = paste0(xenium_folder, 'Xenium_FFPE_Human_Breast_Cancer_Rep1_experiment.xenium')
+he_img_path = paste0(xenium_folder, 'Xenium_FFPE_Human_Breast_Cancer_Rep1_he_image.tif')
+if_img_path = paste0(xenium_folder, 'Xenium_FFPE_Human_Breast_Cancer_Rep1_if_image.tif')
+panel_meta_path = paste0(xenium_folder, 'Xenium_FFPE_Human_Breast_Cancer_Rep1_panel.tsv') # (optional)
+
+# Subcellular files:
+cell_bound_path = paste0(xenium_folder, 'Xenium_FFPE_Human_Breast_Cancer_Rep1_cell_boundaries.csv.gz')
+nuc_bound_path = paste0(xenium_folder, 'Xenium_FFPE_Human_Breast_Cancer_Rep1_nucleus_boundaries.csv.gz')
+tx_path = paste0(xenium_folder, 'Xenium_FFPE_Human_Breast_Cancer_Rep1_transcripts.csv.gz')
+feat_meta_path = paste0(xenium_folder, 'cell_feature_matrix/features.tsv.gz') # (also used in aggregate)
+
+# Aggregate files:
+expr_mat_path = paste0(xenium_folder, 'cell_feature_matrix')
+cell_meta_path = paste0(xenium_folder, 'Xenium_FFPE_Human_Breast_Cancer_Rep1_cells.csv.gz') # contains spatlocs
+
+# Cell typing files:
+gene_groups_path = paste0(xenium_folder,"Xenium_FFPE_Human_Breast_Cancer_Rep1_gene_groups.csv")
+feat_groups = data.table::fread(gene_groups_path, header = FALSE)
+colnames(feat_groups) = c("feature", "cell_type")
+
+
+```
+
+
+```{r,eval=TRUE}
+
+
+# Load feature metadata
+# cell_feature_matrix folder must be unpacked before runtime!
+
+feature_dt = data.table::fread(feat_meta_path, header = FALSE)
+colnames(feature_dt) = c('feat_ID','feat_name','feat_type')
+
+# Identify feature IDs that belong to each feature type
+feature_dt[, table(feat_type)]
+feat_types = names(feature_dt[, table(feat_type)])
+
+feat_types_IDs = lapply(
+  feat_types, function(type) feature_dt[feat_type == type, unique(feat_ID)]
+)
+names(feat_types_IDs) = feat_types
+
+
+```
+
+```{r,eval=TRUE}
+
+tx_dt = data.table::fread(tx_path)
+data.table::setnames(x = tx_dt,
+                     old = c('feature_name', 'x_location', 'y_location'),
+                     new = c('feat_ID', 'x', 'y'))
+cat('Transcripts info available:\n ', paste0('"', colnames(tx_dt), '"'), '\n',
+'with', tx_dt[,.N], 'unfiltered detections\n')
+
+# filter by qv (Phred score)
+tx_dt_filtered = tx_dt[qv >= 20]
+cat('and', tx_dt_filtered[,.N], 'filtered detections\n\n')
+
+# separate detections by feature type
+tx_dt_types = lapply(
+  feat_types_IDs, function(types) tx_dt_filtered[feat_ID %in% types]
+)
+
+invisible(lapply(seq_along(tx_dt_types), function(x) {
+  cat(names(tx_dt_types)[[x]], 'detections: ', tx_dt_types[[x]][,.N], '\n')
+}))
+
+```
+
+```{r,eval=TRUE}
+
+gpoints_list = lapply(
+  tx_dt_types, function(x) createGiottoPoints(x = x, verbose = F)
+) # 208.499 sec elapsed
+
+# preview QC probe detections
+plot(gpoints_list$`Blank Codeword`,
+     point_size = 0.3,
+     main = 'Blank Codeword')
+plot(gpoints_list$`Negative Control Codeword`,
+     point_size = 0.3,
+     main = 'Negative Control Codeword')
+plot(gpoints_list$`Negative Control Probe`,
+     point_size = 0.3,
+     main = 'Negative Control Probe')
+
+# preview two genes
+plot(gpoints_list$`Gene Expression`,  # 77.843 sec elapsed
+     feats = c('KRT8', 'MS4A1'))
+tx_dt_types$`Gene Expression`[feat_ID %in% c('KRT8', 'MS4A1'), table(feat_ID)]
+
+```
+
+## Import Segmentation Data
+
+```{r,eval=TRUE}
+
+cellPoly_dt = data.table::fread(cell_bound_path)
+nucPoly_dt = data.table::fread(nuc_bound_path)
+
+data.table::setnames(cellPoly_dt,
+                     old = c('cell_id', 'vertex_x', 'vertex_y'),
+                     new = c('poly_ID', 'x', 'y'))
+data.table::setnames(nucPoly_dt,
+                     old = c('cell_id', 'vertex_x', 'vertex_y'),
+                     new = c('poly_ID', 'x', 'y'))
+
+gpoly_cells = createGiottoPolygonsFromDfr(segmdfr = cellPoly_dt,
+                                          name = 'cell',
+                                          calc_centroids = TRUE,
+                                          verbose = FALSE)
+gpoly_nucs = createGiottoPolygonsFromDfr(segmdfr = nucPoly_dt,
+                                         name = 'nucleus',
+                                         calc_centroids = TRUE,
+                                         verbose = FALSE)
+
+plot(x = gpoly_nucs, point_size = 0.1, type = 'centroid')
+```
+
+## Create a Giotto Object
+
+```{r,eval=TRUE}
+xenium_gobj = createGiottoObjectSubcellular(
+  gpoints = list(rna = gpoints_list$`Gene Expression`,
+                 blank_code = gpoints_list$`Blank Codeword`,
+                 neg_code = gpoints_list$`Negative Control Codeword`,
+                 neg_probe = gpoints_list$`Negative Control Probe`),
+  gpolygons = list(cell = gpoly_cells,
+                   nucleus = gpoly_nucs),
+  instructions = instrs,
+  verbose = FALSE
+  )
+```
+
+### Create a Giotto Object with Convenience Function
+
+```{r, eval=FALSE}
+
+
+xenium_gobj = createGiottoXeniumObject(xenium_dir = xenium_folder,
+                                       data_to_use = c("subcellular", "aggregate"),
+                                       bounds_to_load = c("cell", "nucleus"),
+                                       key_list = list(blank_code = 'BLANK_',
+                                                       neg_code = 'NegControlCodeword_',
+                                                       neg_probe = c('NegControlProbe_|antisense_')), 
+                                       instructions = instrs,
+                                       verbose = FALSE)
+
+
+```
+
+
+```{r,eval=TRUE}
+showGiottoSpatialInfo(xenium_gobj)
+```
+
+
+## Generate Aggregated Expression based on Feature and Boundary (polygon) Information
+```{r, eval=TRUE}
+xenium_gobj = calculateOverlapRaster(xenium_gobj,
+                                     spatial_info = 'cell',
+                                     feat_info = 'rna',
+                                     verbose = FALSE)
+
+xenium_gobj = calculateOverlapRaster(xenium_gobj,
+                                     spatial_info = 'nucleus',
+                                     feat_info = 'rna',
+                                     verbose = FALSE)
+
+showGiottoSpatialInfo(xenium_gobj)
+```
+
+### Assign polygon overlaps information to expression matrix
+In order to create an aggregated expression matrix, the `'rna'` features overlapped by the `'cell'` polygon boundaries are sent to be combined into a cell/feature matrix (named as `'raw'`) in the Giotto object's `expression` slot.
+*Run on a server | Time taken: `98.406 sec elapsed`*
+```{r, eval=T}
+xenium_gobj = overlapToMatrix(xenium_gobj,
+                              poly_info = 'cell',
+                              feat_info = 'rna',
+                              name = 'raw')
+
+xenium_gobj = overlapToMatrix(xenium_gobj,
+                              poly_info = 'nucleus',
+                              feat_info = 'rna',
+                              name = 'raw')
+
+showGiottoExpression(xenium_gobj)
+```
+
+
+### Add Metadata
+```{r, eval=TRUE}
+panel_meta = data.table::fread(panel_meta_path)
+data.table::setnames(panel_meta, 'Name', 'feat_ID')
+
+# Append this metadata
+xenium_gobj = addFeatMetadata(gobject = xenium_gobj,
+                              feat_type = 'rna',
+                              spat_unit = 'cell',
+                              new_metadata = panel_meta,
+                              by_column = TRUE,
+                              column_feat_ID = 'feat_ID')
+
+xenium_gobj = addFeatMetadata(gobject = xenium_gobj,
+                              feat_type = 'rna',
+                              spat_unit = 'nucleus',
+                              new_metadata = panel_meta,
+                              by_column = TRUE,
+                              column_feat_ID = 'feat_ID')
+
+# Print all available features metadata
+showGiottoFeatMetadata(xenium_gobj)
+```
+
+### Data filtering
+Now that an aggregated expression matrix is generated the usual data filtering and processing can be applied.
+We start by setting a count of 1 to be the minimum to consider a feature expressed. A feature must be detected in at least 3 cells to be included. Lastly, a cell must have a minimum of 5 features detected to be included.
+*Run on a server | `229.073 sec elapsed`*
+```{r, eval=T}
+xenium_gobj = filterGiotto(gobject = xenium_gobj,
+                           spat_unit = 'cell',
+                           poly_info = 'cell',
+                           expression_threshold = 1,
+                           feat_det_in_min_cells = 3,
+                           min_det_feats_per_cell = 5,
+                           verbose = FALSE)
+```
+
+
+### Add data statistics
+```{r, eval=T}
+xenium_gobj = addStatistics(xenium_gobj, 
+                            expression_values = 'raw')
+```
+
+```{r,eval=TRUE}
+showGiottoCellMetadata(xenium_gobj)
+```
+
+```{r,eval=TRUE}
+showGiottoFeatMetadata(xenium_gobj)
+```
+
+
+### Normalize expression
+```{r, eval=T}
+xenium_gobj = normalizeGiotto(gobject = xenium_gobj,
+                              spat_unit = 'cell',
+                              scalefactor = 5000,
+                              verbose = FALSE)
+```
+
+
+### Calculate highly variable features
+```{r, eval=T}
+xenium_gobj = calculateHVF(gobject = xenium_gobj,
+                           spat_unit = 'cell',
+                           save_param = list(save_name = '2_HVF'))
+
+n_hvf = fDataDT(xenium_gobj)[, sum(hvf == 'yes')]
+```
+
+## Dimension reduction and clustering
+### PCA
+```{r, eval=T}
+xenium_gobj = runPCA(gobject = xenium_gobj,
+                     spat_unit = 'cell',
+                     expression_values = 'scaled',
+                     feats_to_use = NULL,
+                     scale_unit = F,
+                     center = F,
+                     verbose = FALSE)
+
+# Visualize Screeplot and PCA
+screePlot(xenium_gobj,
+          ncp = 20,
+          save_param = list(save_name = '3a_screePlot'))
+
+plotPCA(xenium_gobj,
+        spat_unit = 'cell',
+        dim_reduction_name = 'pca',
+        point_size = 0.01,
+        dim1_to_use = 1,
+        dim2_to_use = 2,
+        title = 'PCA',
+        save_param = list(save_name = '3b_PCA'))
+```
+
+
+### tSNE and UMAP
+```{r, eval=T}
+xenium_gobj = runtSNE(xenium_gobj,
+                      spat_unit = 'cell', 
+                      dimensions_to_use = 1:10,
+                      verbose = FALSE)
+
+plotTSNE(xenium_gobj,
+         point_size = 0.01,
+         title = 'tSNE',
+         save_param = list(save_name = '4a_tSNE'))
+```
+
+
+```{r, eval=T}
+xenium_gobj = runUMAP(xenium_gobj,
+                      spat_unit = 'cell',
+                      dimensions_to_use = 1:10,
+                      n_threads = determine_cores(),
+                      verbose = FALSE)
+
+# UMAP in three dimensions
+xenium_gobj = runUMAP(xenium_gobj,
+                      spat_unit = 'cell', 
+                      dimensions_to_use = 1:10,
+                      n_components = 3,
+                      name = 'umap_3D',
+                      verbose = FALSE)
+
+plotUMAP(xenium_gobj,
+         point_size = 0.01,
+         title = 'UMAP',
+         save_param = list(save_name = '4b_UMAP'))
+```
+
+### sNN and Leiden clustering
+```{r, eval=T}
+xenium_gobj = createNearestNetwork(xenium_gobj,
+                                   spat_unit = 'cell',
+                                   feat_type = 'rna',
+                                   dimensions_to_use = 1:10,
+                                   k = 10,
+                                   verbose = FALSE)
+
+xenium_gobj = doLeidenCluster(xenium_gobj,
+                              spat_unit = 'cell',
+                              feat_type = 'rna',
+                              resolution = 0.25,
+                              n_iterations = 100)
+
+# visualize UMAP cluster results
+plotUMAP(gobject = xenium_gobj,
+         spat_unit = 'cell',
+         cell_color = 'leiden_clus',
+         show_legend = FALSE,
+         point_size = 0.01,
+         point_shape = 'no_border',
+         save_param = list(save_name = '5a_umap_leiden'))
+```
+
+```{r, eval=TRUE}
+plotUMAP_3D(gobject = xenium_gobj,
+         spat_unit = 'cell',
+         cell_color = 'leiden_clus',
+         dim_reduction_name = 'umap_3D',
+         point_size = 0.01,
+         save_param = list(save_name = '5b_umap_leiden_3D'))
+```
+
+
+
+
+```{r, eval=T}
+spatPlot2D(gobject = xenium_gobj,
+           spat_unit = 'cell',
+           cell_color = 'leiden_clus',
+           point_size = 0.1,
+           point_shape = 'no_border',
+           background_color = 'black',
+           show_legend = TRUE,
+           save_param = list(save_name = '6_spat_leiden',
+                             base_width = 15,
+                             base_height = 15))
+```
+
+```{r,eval=T}
+spatInSituPlotPoints(xenium_gobj,
+                     show_image = FALSE,
+                     feats = NULL,
+                     point_size = 0.05,
+                     show_polygon = TRUE,
+                     polygon_feat_type = 'cell',
+                     polygon_alpha = 1,
+                     polygon_color = 'black',
+                     polygon_line_size = 0.01,
+                     polygon_fill = 'leiden_clus',
+                     polygon_fill_as_factor = TRUE,
+                     coord_fix_ratio = TRUE,
+                     save_para = list(save_name = '7_polys'))
+```
+
+## Spatial expression patterns
+Rapid spatially organized genes detection using Binary Spatial Extraction of genes
+```{r, eval=TRUE}
+# Generate a Spatial Delaunay Network between cell centroids
+
+xenium_gobj = createSpatialNetwork(xenium_gobj,
+                                   spat_unit = "cell",
+                                   feat_type = "rna",
+                                   minimum_k = 2,
+                                   maximum_distance_delaunay = 50)
+
+```
+
+
+```{r, eval=TRUE}
+spatPlot2D(xenium_gobj,
+           spat_unit = 'cell',
+           point_shape = 'no_border',
+           show_network = TRUE, 
+           point_size = 0.01,
+           point_alpha = 0.4,
+           save_param = list(base_width = 7,
+                             base_height = 7,
+                             save_name = '8_spatial_network'))
+```
+
+## View images
+```{r, eval=TRUE}
+he_img = createGiottoLargeImage(raster_object = he_img_path,
+                                name = 'he')
+
+plot(he_img)
+```
+
+
+```{r, eval=TRUE}
+if_img = createGiottoLargeImage(raster_object = if_img_path,
+                                name = 'if')
+
+plot(if_img)
+```
+
+## Subsetting the Giotto Object
+
+```{r, eval=T}
+xen_subset = subsetGiottoLocs(xenium_gobj,
+                              x_max = 7000,
+                              x_min = 6100,
+                              y_max = 5000,
+                              y_min = 3600,
+                              verbose = FALSE)
+
+spatInSituPlotPoints(xen_subset,
+                     show_image = FALSE,
+                     feats = list('rna' = c("LUM", "CXCR4", "ITGAX")),
+                     feats_color_code = c("LUM" = 'green', 'CXCR4' = 'blue', 'ITGAX' = 'red'),
+                     point_size = 0.05,
+                     show_polygon = TRUE,
+                     polygon_feat_type = 'cell',
+                     polygon_color = 'black',
+                     polygon_line_size = 0.01,
+                     polygon_fill = 'leiden_clus',
+                     polygon_fill_as_factor = TRUE,
+                     coord_fix_ratio = TRUE,
+                     save_param = list(save_name = '9_subset_in_situ'))
+```
+
+
+
+## Custom Segmentation(s)
+
+```{r, eval=TRUE}
+# Import
+star_dist = terra::vect(paste0(getwd(), "/xenium/segmentations/imageJ_if_image.geojson"))
+
+# Flip orientation
+star_dist = terra::flip(star_dist, direction = "vertical")
+star_dist = terra::flip(star_dist, direction = "horizontal")
+
+# Manual manipulation of scaling 
+orig_ext = ext(star_dist)@ptr$vector
+orig_xrange = orig_ext[[2]] - orig_ext[[1]]
+orig_yrange = orig_ext[[4]] - orig_ext[[3]]
+
+target_xrange = 6945 - 6115
+target_yrange = 4885 - 3915
+
+x_adj = target_xrange/orig_xrange
+y_adj = target_yrange/orig_yrange
+
+star_dist = terra::rescale(star_dist, fx = x_adj, fy = y_adj)
+
+new_ext = ext(star_dist)@ptr$vector
+
+x_shift_adj = 6115 - new_ext[[1]]
+y_shift_adj = 3915 - new_ext[[3]]
+
+
+# Manipulate extent
+star_dist = terra::shift(star_dist, dx = x_shift_adj, dy = y_shift_adj)
+
+
+names(star_dist)[[1]] = "poly_ID"
+
+# Add to Giotto Object
+sd_polyg = giottoPolygon(spatVector = star_dist, 
+                         unique_ID_cache = names(star_dist)[[1]], 
+                         name = "StarDist")
+
+xen_subset = addGiottoPolygons(xen_subset, 
+                               gpolygons = list(sd_polyg))
+
+xen_subset = addSpatialCentroidLocations(xen_subset, 
+                                         poly_info = "StarDist")
+```
+
+```{r, eval=TRUE}
+# Calculate Expression from new set of Polygons
+
+xen_subset = calculateOverlapRaster(xen_subset, 
+                             spatial_info = "StarDist", 
+                             feat_info = "rna")
+
+xen_subset = overlapToMatrix(xen_subset,
+                      name = "StarDist",
+                      poly_info = "StarDist",
+                      feat_info = "rna")
+```
+
+
+```{r,eval=TRUE}
+xen_subset = filterGiotto(xen_subset,
+                   spat_unit = "StarDist",
+                   feat_type = "rna",
+                   expression_values = "StarDist",
+                   poly_info = "StarDist",
+                   expression_threshold = 1,
+                   feat_det_in_min_cells = 3,
+                   min_det_feats_per_cell = 5,
+                   verbose = FALSE)
+
+xen_subset = normalizeGiotto(xen_subset, 
+                      expression_values = "StarDist",
+                      spat_unit = "StarDist", 
+                      feat_type = "rna",
+                      norm_methods = "standard",
+                      scalefactor = 5000)
+
+xen_subset = addStatistics(xen_subset, 
+                    spat_unit = "StarDist",
+                    feat_type = "rna")
+```
+
+
+### Cell Typing for each Segmentation Method by PAGE Enrichment
+
+```{r, eval=TRUE}
+provided_cell_types = unique(feat_groups[, cell_type])
+sign_list = list()
+idx = 0
+for (ct in provided_cell_types){
+  idx = idx + 1
+  
+  extracted_feats = feat_groups[feat_groups[, cell_type == ct]]$feature
+  
+  sign_list[[idx]] = extracted_feats
+}
+
+PAGE_matrix = makeSignMatrixPAGE(sign_names = provided_cell_types,
+                                 sign_list = sign_list)
+```
+
+```{r,eval=TRUE}
+xen_subset = runPAGEEnrich(gobject = xen_subset,
+                           spat_unit = "cell", 
+                           feat_type = "rna",
+                           sign_matrix = PAGE_matrix,
+                           p_value = TRUE,
+                           expression_values = "normalized",
+                           min_overlap_genes = 1,
+                           name = "PAGE_p_val")
+
+p_PAGE_og = getSpatialEnrichment(xen_subset,
+                                 spat_unit = "cell",
+                                 feat_type = "rna", 
+                                 name = "PAGE_p_val",
+                                 output = "data.table")
+n_c = ncol(p_PAGE_og)
+
+p_PAGE_og[, p_max_cell_type :=  names(.SD)[max.col(.SD)], .SDcols = 2:n_c]
+
+cID_and_types_PAGE_og_p = p_PAGE_og[, .(cell_ID, p_max_cell_type)]
+og_ct_freq = table(cID_and_types_PAGE_og_p$p_max_cell_type)
+
+ggplot2::ggplot(cID_and_types_PAGE_og_p, aes(x = p_max_cell_type)) + 
+  ggplot2::geom_bar() +
+  ggplot2::theme(axis.text.x = element_text(angle = 45),
+                 axis.ticks.length.x =unit(1.5, "cm")) +
+  ggplot2::labs(title = "Original Cell Types from PAGE Enrichment log10(p-value)",
+                x = "Cell Type",
+                y = "Frequency")
+```
+
+
+```{r, eval=TRUE}
+xen_subset = runPAGEEnrich(gobject = xen_subset,
+                   spat_unit = "StarDist", 
+                   feat_type = "rna",
+                   sign_matrix = PAGE_matrix,
+                   p_value = TRUE,
+                   expression_values = "normalized",
+                   min_overlap_genes = 1,
+                   name = "PAGE_p_val")
+
+p_PAGE_sd = getSpatialEnrichment(xen_subset,
+                             spat_unit = "StarDist",
+                             feat_type = "rna", 
+                             name = "PAGE_p_val",
+                             output = "data.table")
+n_c = ncol(p_PAGE_sd)
+
+p_PAGE_sd[, p_max_cell_type :=  names(.SD)[max.col(.SD)], .SDcols = 2:n_c]
+
+cID_and_types_PAGE_sd_p = p_PAGE_sd[, .(cell_ID, p_max_cell_type)]
+sd_ct_freq = table(cID_and_types_PAGE_sd_p$p_max_cell_type)
+
+ggplot2::ggplot(cID_and_types_PAGE_sd_p, aes(x = p_max_cell_type)) + 
+  ggplot2::geom_bar() +
+  ggplot2::theme(axis.text.x = element_text(angle = 45),
+                 axis.ticks.length.x =unit(1.5, "cm")) +
+  ggplot2::labs(title = "StarDist Cell Types from PAGE Enrichment log10(p-value)",
+                x = "Cell Type",
+                y = "Frequency")
+```
+
+### Plot Cell Type Distributions
+```{r,eval=TRUE}
+my_colors = getDistinctColors(16)
+
+og_cell_types = unique(cID_and_types_PAGE_og_p$p_max_cell_type)
+og_ct_freq_dt = data.table::data.table(og_ct_freq)
+colnames(og_ct_freq_dt) = c("cell_type", "num_cells")
+
+og_total_cells = length(cID_and_types_PAGE_og_p$p_max_cell_type)
+
+for ( i in og_cell_types){
+  nullvar = og_ct_freq_dt[cell_type == i, perc := num_cells/sum(og_ct_freq_dt$num_cells) * 100]
+}
+
+pl_og = ggplot2::ggplot(as.data.frame(og_ct_freq_dt), aes(x="", y=perc, fill = cell_type)) +
+          geom_bar(stat="identity", width = 1) +
+          coord_polar("y", start = 0) +
+          scale_fill_manual(values = my_colors) +
+          theme_void() +
+          labs(title = paste("Original Cell Types (", as.character(og_total_cells), " Cells)"))
+
+
+sd_cell_types = unique(cID_and_types_PAGE_sd_p$p_max_cell_type)
+sd_ct_freq_dt = data.table::data.table(sd_ct_freq)
+colnames(sd_ct_freq_dt) = c("cell_type", "num_cells")
+
+sd_total_cells = length(cID_and_types_PAGE_sd_p$p_max_cell_type)
+
+for ( i in sd_cell_types){
+  nullvar = sd_ct_freq_dt[cell_type == i, perc := num_cells/sum(sd_ct_freq_dt$num_cells) * 100]
+}
+
+pl_sd = ggplot2::ggplot(as.data.frame(sd_ct_freq_dt), aes(x="", y=perc, fill = cell_type)) +
+          geom_bar(stat="identity", width = 1) +
+          coord_polar("y", start = 0) +
+          scale_fill_manual(values = my_colors) +
+          theme_void() +
+          labs(title = paste("StarDist Cell Types (", as.character(sd_total_cells), " Cells)"))
+
+cowplot::plot_grid(pl_sd, pl_og, align = "h", ncol = 2, nrow = 1)
+
+
+```
+
+
+## Save the Giotto Objects
+To save the Giotto Objects, provide an existing subdirectory within `results_folder` to the `foldername` argument. These objects may be loaded calling `loadGiotto("/path/to/foldername/")`.
+
+```{r, eval=TRUE}
+saveGiotto(gobject = xenium_gobj,
+           foldername =  'saved_gobjects',
+           dir = results_folder,
+           image_filetype = '.tif',
+           overwrite = TRUE)
+
+saveGiotto(gobject = xen_subset,
+           foldername =  'saved_gobjects_subset',
+           dir = results_folder,
+           image_filetype = '.tif',
+           overwrite = TRUE)
+```
+
+
