@@ -1,0 +1,91 @@
+---
+title: "Giotto Interoperability"
+output: html_document
+date: "2023-08-02"
+author: "Iqra Amin, Irzam Sarfraz"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(SpatialExperiment)
+library(nnSVG)
+library(Giotto)
+library(GiottoData)
+```
+
+
+## Introduction
+Giotto suite offers interoperability with other tools for spatial transcriptomics including the ones available from Bioconductor. For this purpose, Giotto provides converter functions that convert Giotto object to SpatialExperiment object and vice versa for use with any of the Bioconductor tools or the Giotto toolkit.
+
+Here we show one such example where we load a Giotto object, convert to a SpatialExperiment object, use packages from Bioconductor to perform some processing on the object and then convert it back to Giotto for use with Giotto toolkit.
+
+## Convert Giotto to SpatialExperiment
+We first load an example Visium mouse brain dataset in the form of a mini Giotto object using the GiottoData package:
+
+```{r, results='hide', message=FALSE, warning=FALSE}
+library(Giotto)
+library(GiottoData)
+
+g <- GiottoData::loadGiottoMini(dataset = "visium", python_path ="/share/pkg.7/python3/3.8.3/install/bin/python")
+print(g)
+
+```
+Now, we convert the Giotto object into a SpatialExperiment object using the converter function giottoToSpatialExperiment provided with the Giotto suite toolkit:
+ 
+```{r, warning=FALSE, message=FALSE}
+library(SpatialExperiment)
+
+gspe <- giottoToSpatialExperiment(g)
+```
+
+The function returns a list of SpatialExperiment objects, where each element of the list is a single object representing an invdividual unit in the Giotto object. We use the first element for downstream analysis:
+
+```{r, warning=FALSE}
+spe <- gspe[[1]]
+print(spe)
+```
+
+## Identify top spatially variable genes with nnSVG
+We use the nnSVG package to identify the top spatially variable genes in our SpatialExperiment object. We can also add covariates to our model and for this example we use leiden clustering labels as a covariate. The clustering results were previously computed with the Giotto suite and passed onto the converted SpatialExperiment object.
+
+```{r, warning=FALSE}
+library(nnSVG)
+
+# One of the assays should be "logcounts"
+# We rename the normalized assay to "logcounts"
+assayNames(spe)[[2]] <- "logcounts"
+
+# Create model matrix for leiden clustering labels
+X <- model.matrix(~ colData(spe)$leiden_clus)
+dim(X)
+
+# Run nnSVG
+spe <- nnSVG(spe, X = X)
+
+# Show top 10 features
+rowData(spe)[order(rowData(spe)$rank)[1:10], ]$feat_ID
+```
+
+## Conversion of SpatialExperiment object back to Giotto
+We now convert the processed SpatialExperiment object back to Giotto object to perform further downstream analysis with Giotto suite. We use the function spatialExperimentToGiotto and specify the spatial network from our SpatialExperiment object explicitly. 
+
+```{r, warning=FALSE}
+giottoFromSPE <- spatialExperimentToGiotto(spe = spe, python_path = "/share/pkg.7/python3/3.8.3/install/bin/python", sp_network = "Delaunay_network")
+print(giottoFromSPE)
+```
+
+## Plotting top genes from nnSVG in Giotto 
+Now we visualize the genes identified previously in the SpatialExperiment object using nnSVG package in the Giotto toolkit using the converted Giotto object. 
+
+```{r, warning=FALSE}
+ext_spatial_genes <- getFeatureMetadata(giottoFromSPE, output = "data.table")
+ext_spatial_genes <- ext_spatial_genes[order(ext_spatial_genes$rank)[1:10], ]$feat_ID
+
+spatFeatPlot2D(giottoFromSPE, expression_values = 'scaled_rna_cell',
+               feats = ext_spatial_genes[1:4], point_size = 2)
+```
+
+## SessionInfo
+```{r, warning=FALSE}
+sessionInfo()
+```
