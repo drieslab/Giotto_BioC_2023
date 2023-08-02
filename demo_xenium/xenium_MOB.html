@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Matthew O'Brien">
 <meta name="dcterms.date" content="2023-08-02">
 
 <title>Giotto Suite with Xenium Data</title>
@@ -155,13 +156,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
     
     <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Matthew O'Brien</p>
+          </div>
+  </div>
+  
+  <div>
     <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-heading">Matthew O'Brien</div>
     <div class="quarto-title-meta-contents">
       <p class="date">August 2, 2023</p>
     </div>
   </div>
-  
     
   </div>
   
@@ -171,12 +177,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="data-and-package-loading" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="data-and-package-loading"><span class="header-section-number">1</span> Data and Package Loading</h2>
 
-In this demo, the <a href="https://www.10xgenomics.com/products/xenium-in-situ/preview-dataset-human-breast">Xenium Pre-Release Human Breast Cancer Dataset</a> from 10X Genomics will be analyzed using Giotto Suite. Only the first tissue replicate is considered in this analysis. First, ensure Giotto Suite is installed and that the data has been unpacked into an appropriate directory. Then, the analysis begins with loading necessary libraries.
+<p>In this demo, the <a href="https://www.10xgenomics.com/products/xenium-in-situ/preview-dataset-human-breast">Xenium Pre-Release Human Breast Cancer Dataset</a> from 10X Genomics will be analyzed using Giotto Suite. Only the first tissue replicate is considered in this analysis. First, ensure Giotto Suite is installed and that the data has been unpacked into an appropriate directory. Then, the analysis begins with loading necessary libraries.</p>
 
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># ** RESULTS FOLDER **</span></span>
+<div class="sourceCode cell-code" id="cb1"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># ** RESULTS FOLDER **</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a>results_folder <span class="ot">=</span> <span class="st">'/projectnb/rd-spat/HOME/mobrien2/xenium/BioC/'</span></span>
 <span id="cb1-3"><a href="#cb1-3"></a></span>
 <span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(terra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -186,14 +192,14 @@ In this demo, the <a href="https://www.10xgenomics.com/products/xenium-in-situ/p
 
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">library</span>(Giotto)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">library</span>(Giotto)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 
 
 
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(tictoc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="fu">library</span>(tictoc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>terra 1.6.41</code></pre>
@@ -205,10 +211,10 @@ In this demo, the <a href="https://www.10xgenomics.com/products/xenium-in-situ/p
 
     shift, size</code></pre>
 </div>
-Importanly, <code>GiottoInstructions</code> specify how and where any plotting information will be saved, among other <a href="https://giottosuite.readthedocs.io/en/latest/subsections/getting_started/getting_started_gobject.html#customizing-the-giotto-object">specifications</a>.
+<p>Importanly, <code>GiottoInstructions</code> specify how and where any plotting information will be saved, among other <a href="https://giottosuite.readthedocs.io/en/latest/subsections/getting_started/getting_started_gobject.html#customizing-the-giotto-object">specifications</a>.</p>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">library</span>(ggplot2)</span>
+<div class="sourceCode cell-code" id="cb8"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb8-2"><a href="#cb8-2"></a></span>
 <span id="cb8-3"><a href="#cb8-3"></a>instrs <span class="ot">=</span> <span class="fu">createGiottoInstructions</span>(<span class="at">save_dir =</span> results_folder,</span>
 <span id="cb8-4"><a href="#cb8-4"></a>                                  <span class="at">save_plot =</span> <span class="cn">TRUE</span>,</span>
@@ -221,10 +227,10 @@ no external python path was provided, but a giotto python environment was found
  and will be used</code></pre>
 </div>
 
-Specify the appropriate path to import the files into R.
+<p>Specify the appropriate path to import the files into R.</p>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># ** SET PATH TO FOLDER CONTAINING XENIUM DATA **</span></span>
+<div class="sourceCode cell-code" id="cb10"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># ** SET PATH TO FOLDER CONTAINING XENIUM DATA **</span></span>
 <span id="cb10-2"><a href="#cb10-2"></a>xenium_folder <span class="ot">=</span> <span class="st">'/projectnb/rd-spat/DATA/Public_data/Spatial/Multiplexing_RNA/xenium/FFPE_Human_Breast_Cancer/Rep1/'</span></span>
 <span id="cb10-3"><a href="#cb10-3"></a></span>
 <span id="cb10-4"><a href="#cb10-4"></a><span class="co"># General files:</span></span>
@@ -255,7 +261,7 @@ Specify the appropriate path to import the files into R.
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu"></span></span>
+  <div class="sourceCode cell-code" id="cb11"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu"></span></span>
   <span id="cb11-2"><a href="#cb11-2"></a></span>
   <span id="cb11-3"><a href="#cb11-3"></a><span class="co"># Load feature metadata</span></span>
   <span id="cb11-4"><a href="#cb11-4"></a><span class="co"># cell_feature_matrix folder must be unpacked before runtime!</span></span>
@@ -275,7 +281,7 @@ Specify the appropriate path to import the files into R.
   </div>
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>feat_types <span class="ot">=</span> <span class="fu">names</span>(feature_dt[, <span class="fu">table</span>(feat_type)])</span>
+  <div class="sourceCode cell-code" id="cb13"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>feat_types <span class="ot">=</span> <span class="fu">names</span>(feature_dt[, <span class="fu">table</span>(feat_type)])</span>
   <span id="cb13-2"><a href="#cb13-2"></a></span>
   <span id="cb13-3"><a href="#cb13-3"></a>feat_types_IDs <span class="ot">=</span> <span class="fu">lapply</span>(</span>
   <span id="cb13-4"><a href="#cb13-4"></a>  feat_types, <span class="cf">function</span>(type) feature_dt[feat_type <span class="sc">==</span> type, <span class="fu">unique</span>(feat_ID)]</span>
@@ -287,12 +293,12 @@ Specify the appropriate path to import the files into R.
 
 </details>
 
-The path to the transcripts with their respecitve locations will be loaded in using <code>data.table</code>, and some column names are changed for Giotto Suite conventions. The transcripts may then be filtered, here they are filtered according to the Phred score used by 10X. The detected transcripts are then fed into <code>createGiottoPoints()</code>.
+<p>The path to the transcripts with their respecitve locations will be loaded in using <code>data.table</code>, and some column names are changed for Giotto Suite conventions. The transcripts may then be filtered, here they are filtered according to the Phred score used by 10X. The detected transcripts are then fed into <code>createGiottoPoints()</code>.</p>
 
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu"></span></span>
+<div class="sourceCode cell-code" id="cb15"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu"></span></span>
 <span id="cb15-2"><a href="#cb15-2"></a>tx_dt <span class="ot">=</span> data.table<span class="sc">::</span><span class="fu">fread</span>(tx_path)</span>
 <span id="cb15-3"><a href="#cb15-3"></a>data.table<span class="sc">::</span><span class="fu">setnames</span>(<span class="at">x =</span> tx_dt,</span>
 <span id="cb15-4"><a href="#cb15-4"></a>                     <span class="at">old =</span> <span class="fu">c</span>(<span class="st">'feature_name'</span>, <span class="st">'x_location'</span>, <span class="st">'y_location'</span>),</span>
@@ -309,7 +315,7 @@ The path to the transcripts with their respecitve locations will be loaded in us
 
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># filter by qv (Phred score)</span></span>
+<div class="sourceCode cell-code" id="cb17"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># filter by qv (Phred score)</span></span>
 <span id="cb17-2"><a href="#cb17-2"></a>tx_dt_filtered <span class="ot">=</span> tx_dt[qv <span class="sc">&gt;=</span> <span class="dv">20</span>]</span>
 <span id="cb17-3"><a href="#cb17-3"></a><span class="fu">cat</span>(<span class="st">'and'</span>, tx_dt_filtered[,.N], <span class="st">'filtered detections</span><span class="sc">\n\n</span><span class="st">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -318,7 +324,7 @@ The path to the transcripts with their respecitve locations will be loaded in us
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># separate detections by feature type</span></span>
+<div class="sourceCode cell-code" id="cb19"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># separate detections by feature type</span></span>
 <span id="cb19-2"><a href="#cb19-2"></a>tx_dt_types <span class="ot">=</span> <span class="fu">lapply</span>(</span>
 <span id="cb19-3"><a href="#cb19-3"></a>  feat_types_IDs, <span class="cf">function</span>(types) tx_dt_filtered[feat_ID <span class="sc">%in%</span> types]</span>
 <span id="cb19-4"><a href="#cb19-4"></a>)</span>
@@ -338,7 +344,7 @@ Negative Control Probe detections:  37848 </code></pre>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="fu"></span></span>
+<div class="sourceCode cell-code" id="cb23"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="fu"></span></span>
 <span id="cb23-2"><a href="#cb23-2"></a>gpoints_list <span class="ot">=</span> <span class="fu">lapply</span>(</span>
 <span id="cb23-3"><a href="#cb23-3"></a>  tx_dt_types, <span class="cf">function</span>(x) <span class="fu">createGiottoPoints</span>(<span class="at">x =</span> x, <span class="at">verbose =</span> F)</span>
 <span id="cb23-4"><a href="#cb23-4"></a>) <span class="co"></span></span>
@@ -353,7 +359,7 @@ Negative Control Probe detections:  37848 </code></pre>
 </div>
 <details close="">
 <summary>Negative Control Codeword SpatPlot</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="fu">plot</span>(gpoints_list<span class="sc">$</span><span class="st">`</span><span class="at">Negative Control Codeword</span><span class="st">`</span>,</span>
+<div class="sourceCode cell-code" id="cb24"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="fu">plot</span>(gpoints_list<span class="sc">$</span><span class="st">`</span><span class="at">Negative Control Codeword</span><span class="st">`</span>,</span>
 <span id="cb24-2"><a href="#cb24-2"></a>     <span class="at">point_size =</span> <span class="fl">0.3</span>,</span>
 <span id="cb24-3"><a href="#cb24-3"></a>     <span class="at">main =</span> <span class="st">'Negative Control Codeword'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -362,7 +368,7 @@ Negative Control Probe detections:  37848 </code></pre>
 </div>
 <details close="">
 <summary>Negative Control Probe SpatPlot</summary>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="fu">plot</span>(gpoints_list<span class="sc">$</span><span class="st">`</span><span class="at">Negative Control Probe</span><span class="st">`</span>,</span>
+<div class="sourceCode cell-code" id="cb25"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="fu">plot</span>(gpoints_list<span class="sc">$</span><span class="st">`</span><span class="at">Negative Control Probe</span><span class="st">`</span>,</span>
 <span id="cb25-2"><a href="#cb25-2"></a>     <span class="at">point_size =</span> <span class="fl">0.3</span>,</span>
 <span id="cb25-3"><a href="#cb25-3"></a>     <span class="at">main =</span> <span class="st">'Negative Control Probe'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -371,7 +377,7 @@ Negative Control Probe detections:  37848 </code></pre>
 </div>
 <details open="">
 <summary>KRT8 and MS4A1 Gene Expression</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="co"># preview two genes</span></span>
+<div class="sourceCode cell-code" id="cb26"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="co"># preview two genes</span></span>
 <span id="cb26-2"><a href="#cb26-2"></a><span class="fu">plot</span>(gpoints_list<span class="sc">$</span><span class="st">`</span><span class="at">Gene Expression</span><span class="st">`</span>,  <span class="co"></span></span>
 <span id="cb26-3"><a href="#cb26-3"></a>     <span class="at">feats =</span> <span class="fu">c</span>(<span class="st">'KRT8'</span>, <span class="st">'MS4A1'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -380,7 +386,7 @@ Negative Control Probe detections:  37848 </code></pre>
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>tx_dt_types<span class="sc">$</span><span class="st">`</span><span class="at">Gene Expression</span><span class="st">`</span>[feat_ID <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'KRT8'</span>, <span class="st">'MS4A1'</span>), <span class="fu">table</span>(feat_ID)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>tx_dt_types<span class="sc">$</span><span class="st">`</span><span class="at">Gene Expression</span><span class="st">`</span>[feat_ID <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'KRT8'</span>, <span class="st">'MS4A1'</span>), <span class="fu">table</span>(feat_ID)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>feat_ID
@@ -393,12 +399,12 @@ Negative Control Probe detections:  37848 </code></pre>
 <section id="import-segmentation-data" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="import-segmentation-data"><span class="header-section-number">2</span> Import Segmentation Data</h2>
 
-Now that the transcript data has been imported to the Giotto Obejct in the form of <code>GiottoPoints</code>, the cell segmentation data must be imported in the form of <code>GiottoPolygons</code> so that an expression matrix can be created later on. After importing the <code>boundary.csv.gz</code> files for cell and nucleus segmentations and applying some small naming convention changes, the resulting <code>data.table</code>s can become <code>GiottoPolygons</code>.
+<p>Now that the transcript data has been imported to the Giotto Obejct in the form of <code>GiottoPoints</code>, the cell segmentation data must be imported in the form of <code>GiottoPolygons</code> so that an expression matrix can be created later on. After importing the <code>boundary.csv.gz</code> files for cell and nucleus segmentations and applying some small naming convention changes, the resulting <code>data.table</code>s can become <code>GiottoPolygons</code>.</p>
 
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a><span class="fu"></span></span>
+<div class="sourceCode cell-code" id="cb31"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a><span class="fu"></span></span>
 <span id="cb31-2"><a href="#cb31-2"></a>cellPoly_dt <span class="ot">=</span> data.table<span class="sc">::</span><span class="fu">fread</span>(cell_bound_path)</span>
 <span id="cb31-3"><a href="#cb31-3"></a>nucPoly_dt <span class="ot">=</span> data.table<span class="sc">::</span><span class="fu">fread</span>(nuc_bound_path)</span>
 <span id="cb31-4"><a href="#cb31-4"></a></span>
@@ -419,10 +425,10 @@ Now that the transcript data has been imported to the Giotto Obejct in the form 
 <span id="cb31-19"><a href="#cb31-19"></a>                                         <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb31-20"><a href="#cb31-20"></a><span class="fu"></span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-The <code>GiottoPolygon</code> centroids can be immediately visualized using the plot function.
+<p>The <code>GiottoPolygon</code> centroids can be immediately visualized using the plot function.</p>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a><span class="fu">plot</span>(<span class="at">x =</span> gpoly_nucs, <span class="at">point_size =</span> <span class="fl">0.1</span>, <span class="at">type =</span> <span class="st">'centroid'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a><span class="fu">plot</span>(<span class="at">x =</span> gpoly_nucs, <span class="at">point_size =</span> <span class="fl">0.1</span>, <span class="at">type =</span> <span class="st">'centroid'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="xenium_MOB_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
@@ -431,11 +437,11 @@ The <code>GiottoPolygon</code> centroids can be immediately visualized using the
 </section>
 <section id="create-a-giotto-object" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="create-a-giotto-object"><span class="header-section-number">3</span> Create a Giotto Object</h2>
-The transcript information in the form of <code>GiottoPoints</code> and the polygon information in the form of <code>GiottoPolygons</code> may now be fed into <code>createGiottoObjectSubcellular</code> to create a Giotto Object. 
+<p>The transcript information in the form of <code>GiottoPoints</code> and the polygon information in the form of <code>GiottoPolygons</code> may now be fed into <code>createGiottoObjectSubcellular</code> to create a Giotto Object. </p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">createGiottoObjectSubcellular</span>(</span>
+<div class="sourceCode cell-code" id="cb34"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">createGiottoObjectSubcellular</span>(</span>
 <span id="cb34-2"><a href="#cb34-2"></a>  <span class="at">gpoints =</span> <span class="fu">list</span>(<span class="at">rna =</span> gpoints_list<span class="sc">$</span><span class="st">`</span><span class="at">Gene Expression</span><span class="st">`</span>,</span>
 <span id="cb34-3"><a href="#cb34-3"></a>                 <span class="at">blank_code =</span> gpoints_list<span class="sc">$</span><span class="st">`</span><span class="at">Blank Codeword</span><span class="st">`</span>,</span>
 <span id="cb34-4"><a href="#cb34-4"></a>                 <span class="at">neg_code =</span> gpoints_list<span class="sc">$</span><span class="st">`</span><span class="at">Negative Control Codeword</span><span class="st">`</span>,</span>
@@ -473,11 +479,11 @@ The transcript information in the form of <code>GiottoPoints</code> and the poly
 </div>
 <section id="create-a-giotto-object-with-convenience-function" class="level3" data-number="3.1">
 <h3 data-number="3.1" class="anchored" data-anchor-id="create-a-giotto-object-with-convenience-function"><span class="header-section-number">3.1</span> Create a Giotto Object with Convenience Function</h3>
-Alternatively, Giotto Suite offers a convenience function for reduced data manipulation. 
+<p>Alternatively, Giotto Suite offers a convenience function for reduced data manipulation. </p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">createGiottoXeniumObject</span>(<span class="at">xenium_dir =</span> xenium_folder,</span>
+<div class="sourceCode cell-code" id="cb43"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">createGiottoXeniumObject</span>(<span class="at">xenium_dir =</span> xenium_folder,</span>
 <span id="cb43-2"><a href="#cb43-2"></a>                                       <span class="at">data_to_use =</span> <span class="fu">c</span>(<span class="st">"subcellular"</span>, <span class="st">"aggregate"</span>),</span>
 <span id="cb43-3"><a href="#cb43-3"></a>                                       <span class="at">bounds_to_load =</span> <span class="fu">c</span>(<span class="st">"cell"</span>, <span class="st">"nucleus"</span>),</span>
 <span id="cb43-4"><a href="#cb43-4"></a>                                       <span class="at">key_list =</span> <span class="fu">list</span>(<span class="at">blank_code =</span> <span class="st">'BLANK_'</span>,</span>
@@ -490,7 +496,7 @@ Alternatively, Giotto Suite offers a convenience function for reduced data manip
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="fu">showGiottoSpatialInfo</span>(xenium_gobj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="fu">showGiottoSpatialInfo</span>(xenium_gobj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 
 <details close="">
@@ -543,7 +549,7 @@ Spatial Information:
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">calculateOverlapRaster</span>(xenium_gobj,</span>
+<div class="sourceCode cell-code" id="cb47"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">calculateOverlapRaster</span>(xenium_gobj,</span>
 <span id="cb47-2"><a href="#cb47-2"></a>                                     <span class="at">spatial_info =</span> <span class="st">'cell'</span>,</span>
 <span id="cb47-3"><a href="#cb47-3"></a>                                     <span class="at">feat_info =</span> <span class="st">'rna'</span>,</span>
 <span id="cb47-4"><a href="#cb47-4"></a>                                     <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
@@ -604,7 +610,7 @@ Spatial Information:
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">overlapToMatrix</span>(xenium_gobj,</span>
+<div class="sourceCode cell-code" id="cb49"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">overlapToMatrix</span>(xenium_gobj,</span>
 <span id="cb49-2"><a href="#cb49-2"></a>                              <span class="at">poly_info =</span> <span class="st">'cell'</span>,</span>
 <span id="cb49-3"><a href="#cb49-3"></a>                              <span class="at">feat_info =</span> <span class="st">'rna'</span>,</span>
 <span id="cb49-4"><a href="#cb49-4"></a>                              <span class="at">name =</span> <span class="st">'raw'</span>)</span>
@@ -669,7 +675,7 @@ Spatial Information:
          </code></pre>
 </div>
 </details>
-After creating the expression matrix from the polygon and transcript overlaps, the data may be normalized and clustered in a pipeline similar to that which is depicted below:
+<p>After creating the expression matrix from the polygon and transcript overlaps, the data may be normalized and clustered in a pipeline similar to that which is depicted below:</p>
 <p><img src="xenium_MOB_files/figure-html/norm_dimred_cluster.png" class="img-fluid" width="872"></p>
 </div>
 </section>
@@ -682,7 +688,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a>panel_meta <span class="ot">=</span> data.table<span class="sc">::</span><span class="fu">fread</span>(panel_meta_path)</span>
+  <div class="sourceCode cell-code" id="cb51"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a>panel_meta <span class="ot">=</span> data.table<span class="sc">::</span><span class="fu">fread</span>(panel_meta_path)</span>
   <span id="cb51-2"><a href="#cb51-2"></a>data.table<span class="sc">::</span><span class="fu">setnames</span>(panel_meta, <span class="st">'Name'</span>, <span class="st">'feat_ID'</span>)</span>
   <span id="cb51-3"><a href="#cb51-3"></a></span>
   <span id="cb51-4"><a href="#cb51-4"></a><span class="co"># Append this metadata</span></span>
@@ -803,7 +809,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">filterGiotto</span>(<span class="at">gobject =</span> xenium_gobj,</span>
+  <div class="sourceCode cell-code" id="cb53"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">filterGiotto</span>(<span class="at">gobject =</span> xenium_gobj,</span>
   <span id="cb53-2"><a href="#cb53-2"></a>                           <span class="at">spat_unit =</span> <span class="st">'cell'</span>,</span>
   <span id="cb53-3"><a href="#cb53-3"></a>                           <span class="at">poly_info =</span> <span class="st">'cell'</span>,</span>
   <span id="cb53-4"><a href="#cb53-4"></a>                           <span class="at">expression_threshold =</span> <span class="dv">1</span>,</span>
@@ -818,14 +824,14 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">addStatistics</span>(xenium_gobj, </span>
+  <div class="sourceCode cell-code" id="cb54"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">addStatistics</span>(xenium_gobj, </span>
   <span id="cb54-2"><a href="#cb54-2"></a>                            <span class="at">expression_values =</span> <span class="st">'raw'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
   </details>
   </div>
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a><span class="fu">showGiottoCellMetadata</span>(xenium_gobj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+  <div class="sourceCode cell-code" id="cb55"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a><span class="fu">showGiottoCellMetadata</span>(xenium_gobj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
   </details>
   <div class="cell-output cell-output-stdout">
   <pre><code>├──Spatial unit "cell"
@@ -923,7 +929,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="fu">showGiottoFeatMetadata</span>(xenium_gobj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+  <div class="sourceCode cell-code" id="cb57"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a><span class="fu">showGiottoFeatMetadata</span>(xenium_gobj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
   </details>
   <div class="cell-output cell-output-stdout">
   <pre><code>├──Spatial unit "cell"
@@ -1028,7 +1034,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">normalizeGiotto</span>(<span class="at">gobject =</span> xenium_gobj,</span>
+  <div class="sourceCode cell-code" id="cb59"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">normalizeGiotto</span>(<span class="at">gobject =</span> xenium_gobj,</span>
   <span id="cb59-2"><a href="#cb59-2"></a>                              <span class="at">spat_unit =</span> <span class="st">'cell'</span>,</span>
   <span id="cb59-3"><a href="#cb59-3"></a>                              <span class="at">scalefactor =</span> <span class="dv">5000</span>,</span>
   <span id="cb59-4"><a href="#cb59-4"></a>                              <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1040,7 +1046,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">calculateHVF</span>(<span class="at">gobject =</span> xenium_gobj,</span>
+  <div class="sourceCode cell-code" id="cb60"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">calculateHVF</span>(<span class="at">gobject =</span> xenium_gobj,</span>
   <span id="cb60-2"><a href="#cb60-2"></a>                           <span class="at">spat_unit =</span> <span class="st">'cell'</span>,</span>
   <span id="cb60-3"><a href="#cb60-3"></a>                           <span class="at">save_param =</span> <span class="fu">list</span>(<span class="at">save_name =</span> <span class="st">'2_HVF'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
   </details>
@@ -1049,7 +1055,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   </div>
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1"></a>n_hvf <span class="ot">=</span> <span class="fu">fDataDT</span>(xenium_gobj)[, <span class="fu">sum</span>(hvf <span class="sc">==</span> <span class="st">'yes'</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+  <div class="sourceCode cell-code" id="cb61"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1"></a>n_hvf <span class="ot">=</span> <span class="fu">fDataDT</span>(xenium_gobj)[, <span class="fu">sum</span>(hvf <span class="sc">==</span> <span class="st">'yes'</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
   </details>
   </div>
   </section>
@@ -1064,7 +1070,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">runPCA</span>(<span class="at">gobject =</span> xenium_gobj,</span>
+  <div class="sourceCode cell-code" id="cb62"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">runPCA</span>(<span class="at">gobject =</span> xenium_gobj,</span>
   <span id="cb62-2"><a href="#cb62-2"></a>                     <span class="at">spat_unit =</span> <span class="st">'cell'</span>,</span>
   <span id="cb62-3"><a href="#cb62-3"></a>                     <span class="at">expression_values =</span> <span class="st">'scaled'</span>,</span>
   <span id="cb62-4"><a href="#cb62-4"></a>                     <span class="at">feats_to_use =</span> <span class="cn">NULL</span>,</span>
@@ -1077,7 +1083,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   </div>
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1"></a><span class="co"># Visualize Screeplot and PCA</span></span>
+  <div class="sourceCode cell-code" id="cb64"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1"></a><span class="co"># Visualize Screeplot and PCA</span></span>
   <span id="cb64-2"><a href="#cb64-2"></a><span class="fu">screePlot</span>(xenium_gobj,</span>
   <span id="cb64-3"><a href="#cb64-3"></a>          <span class="at">ncp =</span> <span class="dv">20</span>,</span>
   <span id="cb64-4"><a href="#cb64-4"></a>          <span class="at">save_param =</span> <span class="fu">list</span>(<span class="at">save_name =</span> <span class="st">'3a_screePlot'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1090,7 +1096,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   </div>
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1"></a><span class="fu">plotPCA</span>(xenium_gobj,</span>
+  <div class="sourceCode cell-code" id="cb66"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1"></a><span class="fu">plotPCA</span>(xenium_gobj,</span>
   <span id="cb66-2"><a href="#cb66-2"></a>        <span class="at">spat_unit =</span> <span class="st">'cell'</span>,</span>
   <span id="cb66-3"><a href="#cb66-3"></a>        <span class="at">dim_reduction_name =</span> <span class="st">'pca'</span>,</span>
   <span id="cb66-4"><a href="#cb66-4"></a>        <span class="at">point_size =</span> <span class="fl">0.01</span>,</span>
@@ -1109,7 +1115,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">runtSNE</span>(xenium_gobj,</span>
+  <div class="sourceCode cell-code" id="cb67"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">runtSNE</span>(xenium_gobj,</span>
   <span id="cb67-2"><a href="#cb67-2"></a>                      <span class="at">spat_unit =</span> <span class="st">'cell'</span>, </span>
   <span id="cb67-3"><a href="#cb67-3"></a>                      <span class="at">dimensions_to_use =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,</span>
   <span id="cb67-4"><a href="#cb67-4"></a>                      <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
@@ -1126,7 +1132,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">runUMAP</span>(xenium_gobj,</span>
+  <div class="sourceCode cell-code" id="cb68"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">runUMAP</span>(xenium_gobj,</span>
   <span id="cb68-2"><a href="#cb68-2"></a>                      <span class="at">spat_unit =</span> <span class="st">'cell'</span>,</span>
   <span id="cb68-3"><a href="#cb68-3"></a>                      <span class="at">dimensions_to_use =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,</span>
   <span id="cb68-4"><a href="#cb68-4"></a>                      <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
@@ -1154,7 +1160,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">createNearestNetwork</span>(xenium_gobj,</span>
+  <div class="sourceCode cell-code" id="cb69"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1"></a>xenium_gobj <span class="ot">=</span> <span class="fu">createNearestNetwork</span>(xenium_gobj,</span>
   <span id="cb69-2"><a href="#cb69-2"></a>                                   <span class="at">spat_unit =</span> <span class="st">'cell'</span>,</span>
   <span id="cb69-3"><a href="#cb69-3"></a>                                   <span class="at">feat_type =</span> <span class="st">'rna'</span>,</span>
   <span id="cb69-4"><a href="#cb69-4"></a>                                   <span class="at">dimensions_to_use =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>,</span>
@@ -1183,7 +1189,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1"></a><span class="fu">plotUMAP_3D</span>(<span class="at">gobject =</span> xenium_gobj,</span>
+  <div class="sourceCode cell-code" id="cb70"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1"></a><span class="fu">plotUMAP_3D</span>(<span class="at">gobject =</span> xenium_gobj,</span>
   <span id="cb70-2"><a href="#cb70-2"></a>         <span class="at">spat_unit =</span> <span class="st">'cell'</span>,</span>
   <span id="cb70-3"><a href="#cb70-3"></a>         <span class="at">cell_color =</span> <span class="st">'leiden_clus'</span>,</span>
   <span id="cb70-4"><a href="#cb70-4"></a>         <span class="at">dim_reduction_name =</span> <span class="st">'umap_3D'</span>,</span>
@@ -1200,7 +1206,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a><span class="fu">spatPlot2D</span>(<span class="at">gobject =</span> xenium_gobj,</span>
+  <div class="sourceCode cell-code" id="cb72"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1"></a><span class="fu">spatPlot2D</span>(<span class="at">gobject =</span> xenium_gobj,</span>
   <span id="cb72-2"><a href="#cb72-2"></a>           <span class="at">spat_unit =</span> <span class="st">'cell'</span>,</span>
   <span id="cb72-3"><a href="#cb72-3"></a>           <span class="at">cell_color =</span> <span class="st">'leiden_clus'</span>,</span>
   <span id="cb72-4"><a href="#cb72-4"></a>           <span class="at">point_size =</span> <span class="fl">0.1</span>,</span>
@@ -1218,7 +1224,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
   <div class="cell">
   <details open="">
   <summary>Code</summary>
-  <div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1"></a><span class="fu">spatInSituPlotPoints</span>(xenium_gobj,</span>
+  <div class="sourceCode cell-code" id="cb73"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1"></a><span class="fu">spatInSituPlotPoints</span>(xenium_gobj,</span>
   <span id="cb73-2"><a href="#cb73-2"></a>                     <span class="at">show_image =</span> <span class="cn">FALSE</span>,</span>
   <span id="cb73-3"><a href="#cb73-3"></a>                     <span class="at">feats =</span> <span class="cn">NULL</span>,</span>
   <span id="cb73-4"><a href="#cb73-4"></a>                     <span class="at">point_size =</span> <span class="fl">0.05</span>,</span>
@@ -1251,7 +1257,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1"></a><span class="co"># Generate a Spatial Delaunay Network between cell centroids</span></span>
+<div class="sourceCode cell-code" id="cb76"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1"></a><span class="co"># Generate a Spatial Delaunay Network between cell centroids</span></span>
 <span id="cb76-2"><a href="#cb76-2"></a></span>
 <span id="cb76-3"><a href="#cb76-3"></a>xenium_gobj <span class="ot">=</span> <span class="fu">createSpatialNetwork</span>(xenium_gobj,</span>
 <span id="cb76-4"><a href="#cb76-4"></a>                                   <span class="at">spat_unit =</span> <span class="st">"cell"</span>,</span>
@@ -1263,7 +1269,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1"></a><span class="fu">spatPlot2D</span>(xenium_gobj,</span>
+<div class="sourceCode cell-code" id="cb77"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1"></a><span class="fu">spatPlot2D</span>(xenium_gobj,</span>
 <span id="cb77-2"><a href="#cb77-2"></a>           <span class="at">spat_unit =</span> <span class="st">'cell'</span>,</span>
 <span id="cb77-3"><a href="#cb77-3"></a>           <span class="at">point_shape =</span> <span class="st">'no_border'</span>,</span>
 <span id="cb77-4"><a href="#cb77-4"></a>           <span class="at">show_network =</span> <span class="cn">TRUE</span>, </span>
@@ -1283,7 +1289,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1"></a>he_img <span class="ot">=</span> <span class="fu">createGiottoLargeImage</span>(<span class="at">raster_object =</span> he_img_path,</span>
+<div class="sourceCode cell-code" id="cb78"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1"></a>he_img <span class="ot">=</span> <span class="fu">createGiottoLargeImage</span>(<span class="at">raster_object =</span> he_img_path,</span>
 <span id="cb78-2"><a href="#cb78-2"></a>                                <span class="at">name =</span> <span class="st">'he'</span>)</span>
 <span id="cb78-3"><a href="#cb78-3"></a></span>
 <span id="cb78-4"><a href="#cb78-4"></a><span class="fu">plot</span>(he_img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1295,7 +1301,7 @@ After creating the expression matrix from the polygon and transcript overlaps, t
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1"></a>if_img <span class="ot">=</span> <span class="fu">createGiottoLargeImage</span>(<span class="at">raster_object =</span> if_img_path,</span>
+<div class="sourceCode cell-code" id="cb79"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1"></a>if_img <span class="ot">=</span> <span class="fu">createGiottoLargeImage</span>(<span class="at">raster_object =</span> if_img_path,</span>
 <span id="cb79-2"><a href="#cb79-2"></a>                                <span class="at">name =</span> <span class="st">'if'</span>)</span>
 <span id="cb79-3"><a href="#cb79-3"></a></span>
 <span id="cb79-4"><a href="#cb79-4"></a><span class="fu">plot</span>(if_img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1308,12 +1314,12 @@ After creating the expression matrix from the polygon and transcript overlaps, t
 <section id="subsetting-the-giotto-object" class="level2" data-number="8">
 <h2 data-number="8" class="anchored" data-anchor-id="subsetting-the-giotto-object"><span class="header-section-number">8</span> Subsetting the Giotto Object</h2>
 
-Subsetting subcellular data is especially useful for enhanced visualizations, as well as faster computations. Here, we will subset to an arbitrary ROI and visualize the polygons and transcripts from the original data provided by 10X Genomics.
+<p>Subsetting subcellular data is especially useful for enhanced visualizations, as well as faster computations. Here, we will subset to an arbitrary ROI and visualize the polygons and transcripts from the original data provided by 10X Genomics.</p>
 
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1"></a>xen_subset <span class="ot">=</span> <span class="fu">subsetGiottoLocs</span>(xenium_gobj,</span>
+<div class="sourceCode cell-code" id="cb80"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1"></a>xen_subset <span class="ot">=</span> <span class="fu">subsetGiottoLocs</span>(xenium_gobj,</span>
 <span id="cb80-2"><a href="#cb80-2"></a>                              <span class="at">x_max =</span> <span class="dv">7000</span>,</span>
 <span id="cb80-3"><a href="#cb80-3"></a>                              <span class="at">x_min =</span> <span class="dv">6100</span>,</span>
 <span id="cb80-4"><a href="#cb80-4"></a>                              <span class="at">y_max =</span> <span class="dv">5000</span>,</span>
@@ -1348,11 +1354,11 @@ Subsetting subcellular data is especially useful for enhanced visualizations, as
 </div>
 </div>
 
-Subsetting preserves the structures created previously, such as the spatial network:
+<p>Subsetting preserves the structures created previously, such as the spatial network:</p>
 
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">spatPlot2D</span>(xen_subset,</span>
+<div class="sourceCode cell-code" id="cb29"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">spatPlot2D</span>(xen_subset,</span>
 <span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">spat_unit =</span> <span class="st">'cell'</span>,</span>
 <span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">point_shape =</span> <span class="st">'no_border'</span>,</span>
 <span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">show_network =</span> <span class="cn">TRUE</span>, </span>
@@ -1370,12 +1376,12 @@ Subsetting preserves the structures created previously, such as the spatial netw
 <section id="custom-segmentations" class="level2" data-number="9">
 <h2 data-number="9" class="anchored" data-anchor-id="custom-segmentations"><span class="header-section-number">9</span> Custom Segmentation(s)</h2>
 
-Alternative segmentation methods may also be imported to the Giotto Object, if desired. Here, polygon annotations from <code>StarDist</code>, a <code>QuPath</code> extension, are imported through <code>terra</code>. They will function with the same pipeline as the original data!
+<p>Alternative segmentation methods may also be imported to the Giotto Object, if desired. Here, polygon annotations from <code>StarDist</code>, a <code>QuPath</code> extension, are imported through <code>terra</code>. They will function with the same pipeline as the original data!</p>
 
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1"></a><span class="co"># Import</span></span>
+<div class="sourceCode cell-code" id="cb84"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1"></a><span class="co"># Import</span></span>
 <span id="cb84-2"><a href="#cb84-2"></a>star_dist <span class="ot">=</span> terra<span class="sc">::</span><span class="fu">vect</span>(<span class="st">"/projectnb/rd-spat/HOME/mobrien2/xenium/segmentations/imageJ_if_image.geojson"</span>)</span>
 <span id="cb84-3"><a href="#cb84-3"></a></span>
 <span id="cb84-4"><a href="#cb84-4"></a><span class="co"># Flip orientation</span></span>
@@ -1425,7 +1431,7 @@ Alternative segmentation methods may also be imported to the Giotto Object, if d
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1"></a><span class="co"># Calculate Expression from new set of Polygons</span></span>
+<div class="sourceCode cell-code" id="cb86"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1"></a><span class="co"># Calculate Expression from new set of Polygons</span></span>
 <span id="cb86-2"><a href="#cb86-2"></a></span>
 <span id="cb86-3"><a href="#cb86-3"></a>xen_subset <span class="ot">=</span> <span class="fu">calculateOverlapRaster</span>(xen_subset, </span>
 <span id="cb86-4"><a href="#cb86-4"></a>                             <span class="at">spatial_info =</span> <span class="st">"StarDist"</span>, </span>
@@ -1440,7 +1446,7 @@ Alternative segmentation methods may also be imported to the Giotto Object, if d
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1"></a>xen_subset <span class="ot">=</span> <span class="fu">overlapToMatrix</span>(xen_subset,</span>
+<div class="sourceCode cell-code" id="cb88"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1"></a>xen_subset <span class="ot">=</span> <span class="fu">overlapToMatrix</span>(xen_subset,</span>
 <span id="cb88-2"><a href="#cb88-2"></a>                      <span class="at">name =</span> <span class="st">"StarDist"</span>,</span>
 <span id="cb88-3"><a href="#cb88-3"></a>                      <span class="at">poly_info =</span> <span class="st">"StarDist"</span>,</span>
 <span id="cb88-4"><a href="#cb88-4"></a>                      <span class="at">feat_info =</span> <span class="st">"rna"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1449,7 +1455,7 @@ Alternative segmentation methods may also be imported to the Giotto Object, if d
 <div class="cell">
 <details close="">
 <summary>Filter and Normalize</summary>
-<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1"></a>xen_subset <span class="ot">=</span> <span class="fu">filterGiotto</span>(xen_subset,</span>
+<div class="sourceCode cell-code" id="cb89"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1"></a>xen_subset <span class="ot">=</span> <span class="fu">filterGiotto</span>(xen_subset,</span>
 <span id="cb89-2"><a href="#cb89-2"></a>                   <span class="at">spat_unit =</span> <span class="st">"StarDist"</span>,</span>
 <span id="cb89-3"><a href="#cb89-3"></a>                   <span class="at">feat_type =</span> <span class="st">"rna"</span>,</span>
 <span id="cb89-4"><a href="#cb89-4"></a>                   <span class="at">expression_values =</span> <span class="st">"StarDist"</span>,</span>
@@ -1469,18 +1475,18 @@ Alternative segmentation methods may also be imported to the Giotto Object, if d
 
 <details close="">
 <summary>Add Statistics</summary>
-<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1"></a>xen_subset <span class="ot">=</span> <span class="fu">addStatistics</span>(xen_subset, </span>
+<div class="sourceCode cell-code" id="cb91"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1"></a>xen_subset <span class="ot">=</span> <span class="fu">addStatistics</span>(xen_subset, </span>
 <span id="cb91-2"><a href="#cb91-2"></a>                    <span class="at">spat_unit =</span> <span class="st">"StarDist"</span>,</span>
 <span id="cb91-3"><a href="#cb91-3"></a>                    <span class="at">feat_type =</span> <span class="st">"rna"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <section id="cell-typing-for-each-segmentation-method-by-page-enrichment" class="level3" data-number="9.1">
 <h3 data-number="9.1" class="anchored" data-anchor-id="cell-typing-for-each-segmentation-method-by-page-enrichment"><span class="header-section-number">9.1</span> Cell Typing for each Segmentation Method by PAGE Enrichment</h3>
-The provided genes and associated cell types provided by 10X Genomics for this data can be used to identify the cell types in this subset. To do so, a cell-type enrichment can be run on each set of segmentations. A Parametric Analysis of Gene Set Enrichment (PAGE) is run here. Giotto Suite's PAGE implementation calculates either Z-scores or -log10(p-values) for a gene set based on fold change. A sign matrix must be provided to the function; it is a binarized matrix of genes (rows) by cell types (columns) in which a value of 1 indicates association between given gene and cell type.
+<p>The provided genes and associated cell types provided by 10X Genomics for this data can be used to identify the cell types in this subset. To do so, a cell-type enrichment can be run on each set of segmentations. A Parametric Analysis of Gene Set Enrichment (PAGE) is run here. Giotto Suite's PAGE implementation calculates either Z-scores or -log10(p-values) for a gene set based on fold change. A sign matrix must be provided to the function; it is a binarized matrix of genes (rows) by cell types (columns) in which a value of 1 indicates association between given gene and cell type.</p>
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1"></a>provided_cell_types <span class="ot">=</span> <span class="fu">unique</span>(feat_groups[, cell_type])</span>
+<div class="sourceCode cell-code" id="cb92"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1"></a>provided_cell_types <span class="ot">=</span> <span class="fu">unique</span>(feat_groups[, cell_type])</span>
 <span id="cb92-2"><a href="#cb92-2"></a>sign_list <span class="ot">=</span> <span class="fu">list</span>()</span>
 <span id="cb92-3"><a href="#cb92-3"></a>idx <span class="ot">=</span> <span class="dv">0</span></span>
 <span id="cb92-4"><a href="#cb92-4"></a><span class="cf">for</span> (ct <span class="cf">in</span> provided_cell_types){</span>
@@ -1498,7 +1504,7 @@ The provided genes and associated cell types provided by 10X Genomics for this d
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1"></a>xen_subset <span class="ot">=</span> <span class="fu">runPAGEEnrich</span>(<span class="at">gobject =</span> xen_subset,</span>
+<div class="sourceCode cell-code" id="cb93"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1"></a>xen_subset <span class="ot">=</span> <span class="fu">runPAGEEnrich</span>(<span class="at">gobject =</span> xen_subset,</span>
 <span id="cb93-2"><a href="#cb93-2"></a>                           <span class="at">spat_unit =</span> <span class="st">"cell"</span>, </span>
 <span id="cb93-3"><a href="#cb93-3"></a>                           <span class="at">feat_type =</span> <span class="st">"rna"</span>,</span>
 <span id="cb93-4"><a href="#cb93-4"></a>                           <span class="at">sign_matrix =</span> PAGE_matrix,</span>
@@ -1515,7 +1521,7 @@ The provided genes and associated cell types provided by 10X Genomics for this d
 </div>
 <details close="">
 <summary>Extract and Plot Enrichment Information for the StarDist Segmentation</summary>
-<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1"></a>p_PAGE_og <span class="ot">=</span> <span class="fu">getSpatialEnrichment</span>(xen_subset,</span>
+<div class="sourceCode cell-code" id="cb95"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1"></a>p_PAGE_og <span class="ot">=</span> <span class="fu">getSpatialEnrichment</span>(xen_subset,</span>
 <span id="cb95-2"><a href="#cb95-2"></a>                                 <span class="at">spat_unit =</span> <span class="st">"cell"</span>,</span>
 <span id="cb95-3"><a href="#cb95-3"></a>                                 <span class="at">feat_type =</span> <span class="st">"rna"</span>, </span>
 <span id="cb95-4"><a href="#cb95-4"></a>                                 <span class="at">name =</span> <span class="st">"PAGE_p_val"</span>,</span>
@@ -1542,7 +1548,7 @@ The provided genes and associated cell types provided by 10X Genomics for this d
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1"></a>xen_subset <span class="ot">=</span> <span class="fu">runPAGEEnrich</span>(<span class="at">gobject =</span> xen_subset,</span>
+<div class="sourceCode cell-code" id="cb96"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1"></a>xen_subset <span class="ot">=</span> <span class="fu">runPAGEEnrich</span>(<span class="at">gobject =</span> xen_subset,</span>
 <span id="cb96-2"><a href="#cb96-2"></a>                   <span class="at">spat_unit =</span> <span class="st">"StarDist"</span>, </span>
 <span id="cb96-3"><a href="#cb96-3"></a>                   <span class="at">feat_type =</span> <span class="st">"rna"</span>,</span>
 <span id="cb96-4"><a href="#cb96-4"></a>                   <span class="at">sign_matrix =</span> PAGE_matrix,</span>
@@ -1559,7 +1565,7 @@ The provided genes and associated cell types provided by 10X Genomics for this d
 </div>
 <details close="">
 <summary>Extract and Plot Enrichment Information for the Original Segmentation</summary>
-<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1"></a>p_PAGE_sd <span class="ot">=</span> <span class="fu">getSpatialEnrichment</span>(xen_subset,</span>
+<div class="sourceCode cell-code" id="cb98"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1"></a>p_PAGE_sd <span class="ot">=</span> <span class="fu">getSpatialEnrichment</span>(xen_subset,</span>
 <span id="cb98-2"><a href="#cb98-2"></a>                             <span class="at">spat_unit =</span> <span class="st">"StarDist"</span>,</span>
 <span id="cb98-3"><a href="#cb98-3"></a>                             <span class="at">feat_type =</span> <span class="st">"rna"</span>, </span>
 <span id="cb98-4"><a href="#cb98-4"></a>                             <span class="at">name =</span> <span class="st">"PAGE_p_val"</span>,</span>
@@ -1589,7 +1595,7 @@ The provided genes and associated cell types provided by 10X Genomics for this d
 <div class="cell">
 <details close="">
 <summary>Compare Cell Typing for Each Segmentation</summary>
-<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1"></a>my_colors <span class="ot">=</span> <span class="fu">getDistinctColors</span>(<span class="dv">16</span>)</span>
+<div class="sourceCode cell-code" id="cb99"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1"></a>my_colors <span class="ot">=</span> <span class="fu">getDistinctColors</span>(<span class="dv">16</span>)</span>
 <span id="cb99-2"><a href="#cb99-2"></a></span>
 <span id="cb99-3"><a href="#cb99-3"></a>og_cell_types <span class="ot">=</span> <span class="fu">unique</span>(cID_and_types_PAGE_og_p<span class="sc">$</span>p_max_cell_type)</span>
 <span id="cb99-4"><a href="#cb99-4"></a>og_ct_freq_dt <span class="ot">=</span> data.table<span class="sc">::</span><span class="fu">data.table</span>(og_ct_freq)</span>
@@ -1640,7 +1646,7 @@ The provided genes and associated cell types provided by 10X Genomics for this d
 <div class="cell">
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1"></a><span class="fu">saveGiotto</span>(<span class="at">gobject =</span> xenium_gobj,</span>
+<div class="sourceCode cell-code" id="cb100"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1"></a><span class="fu">saveGiotto</span>(<span class="at">gobject =</span> xenium_gobj,</span>
 <span id="cb100-2"><a href="#cb100-2"></a>           <span class="at">foldername =</span>  <span class="st">'saved_gobjects'</span>,</span>
 <span id="cb100-3"><a href="#cb100-3"></a>           <span class="at">dir =</span> results_folder,</span>
 <span id="cb100-4"><a href="#cb100-4"></a>           <span class="at">image_filetype =</span> <span class="st">'.tif'</span>,</span>
@@ -1678,7 +1684,7 @@ The provided genes and associated cell types provided by 10X Genomics for this d
 </div>
 <details open="">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb111"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1"></a><span class="fu">saveGiotto</span>(<span class="at">gobject =</span> xen_subset,</span>
+<div class="sourceCode cell-code" id="cb111"><pre style="background-color: #f5f5f5;"  class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1"></a><span class="fu">saveGiotto</span>(<span class="at">gobject =</span> xen_subset,</span>
 <span id="cb111-2"><a href="#cb111-2"></a>           <span class="at">foldername =</span>  <span class="st">'saved_gobjects_subset'</span>,</span>
 <span id="cb111-3"><a href="#cb111-3"></a>           <span class="at">dir =</span> results_folder,</span>
 <span id="cb111-4"><a href="#cb111-4"></a>           <span class="at">image_filetype =</span> <span class="st">'.tif'</span>,</span>
